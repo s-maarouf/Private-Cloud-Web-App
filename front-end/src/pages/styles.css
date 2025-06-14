@@ -1,0 +1,123 @@
+/* General Reset and Font */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+  background: linear-gradient(135deg, #e0f7fa 0%, #ffffff 100%);
+  display: block;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Card Container */
+.auth-container {
+  background-color: #ffffff;
+  padding: 40px;
+  border-radius: 15px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 450px; /* Slightly wider for Register */
+  text-align: center;
+}
+
+/* Heading */
+h1 {
+  font-size: 2.2rem;
+  color: #0288d1;
+  margin-bottom: 25px;
+  font-weight: bold;
+}
+
+/* Messages */
+.message-success {
+  color: #2e7d32;
+  background-color: #e8f5e9;
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.message-error {
+  color: #c62828;
+  background-color: #ffebee;
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+/* Form Styling */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-field {
+  text-align: left;
+}
+
+label {
+  display: block;
+  color: #555;
+  margin-bottom: 5px;
+  font-size: 1rem;
+}
+
+input,
+select {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+input:focus,
+select:focus {
+  border-color: #0288d1;
+}
+
+select {
+  background-color: #fff;
+  cursor: pointer;
+}
+
+/* Button */
+.auth-button {
+  padding: 12px 30px;
+  background-color: #0288d1;
+  color: #fff;
+  border: none;
+  border-radius: 25px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.auth-button:hover {
+  background-color: #0277bd;
+  transform: scale(1.05);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 480px) {
+  .auth-container {
+    padding: 20px;
+    max-width: 90%;
+  }
+
+  h1 {
+    font-size: 1.8rem;
+  }
+
+  .auth-button {
+    padding: 10px 20px;
+  }
+}

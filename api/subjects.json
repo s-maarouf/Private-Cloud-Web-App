@@ -1,0 +1,32 @@
+[
+  {
+    "description": "",
+    "teacher_id": 1,
+    "name": "Dveloppement Applications"
+  },
+  {
+    "description": "",
+    "teacher_id": 2,
+    "name": "Réseau Informatique"
+  },
+  {
+    "description": "",
+    "teacher_id": 3,
+    "name": "GNU/Linux"
+  },
+  {
+    "description": "",
+    "teacher_id": 4,
+    "name": "Système Informatique"
+  },
+  {
+    "description": "",
+    "teacher_id": 5,
+    "name": "Francais"
+  },
+  {
+    "description": "",
+    "teacher_id": 6,
+    "name": "Arabe"
+  }
+]

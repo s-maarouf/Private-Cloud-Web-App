@@ -1,0 +1,87 @@
+/* Main application styles - Scope-limited to prevent affecting other components */
+.openstack-app {
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+}
+
+.openstack-app * {
+	box-sizing: border-box;
+}
+
+.openstack-main-content {
+	flex: 1;
+}
+
+/* Admin layout styles - Specifically scoped to admin components */
+.openstack-admin-layout {
+	display: flex;
+	width: 100%;
+}
+
+.openstack-admin-content {
+	flex: 1;
+	margin-left: 250px; /* Width of the sidebar */
+	padding: 20px;
+}
+
+/* Authenticated layout styles for all authenticated users */
+.openstack-authenticated-layout {
+	display: flex;
+	width: 100%;
+	min-height: calc(100vh - 60px); /* Subtract header height */
+}
+
+.openstack-authenticated-content {
+	flex: 1;
+	margin-left: 250px; /* Width of the sidebar */
+	padding: 20px;
+	transition: margin-left 0.3s ease;
+}
+
+@media (max-width: 768px) {
+	.openstack-admin-content,
+	.openstack-authenticated-content {
+		margin-left: 60px; /* Collapsed sidebar width */
+	}
+}
+
+/* Common utility classes - Prefixed to avoid collisions */
+.openstack-container {
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: 0 15px;
+}
+
+.openstack-section {
+	padding: 60px 0;
+}
+
+.openstack-text-center {
+	text-align: center;
+}
+
+.openstack-loading {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	min-height: 200px;
+}
+
+.openstack-error {
+	color: #e74c3c;
+	padding: 10px;
+	border: 1px solid #e74c3c;
+	border-radius: 4px;
+	margin: 15px 0;
+	background-color: #fdeded;
+}
+
+.openstack-success {
+	color: #2ecc71;
+	padding: 10px;
+	border: 1px solid #2ecc71;
+	border-radius: 4px;
+	margin: 15px 0;
+	background-color: #e6f9ee;
+}

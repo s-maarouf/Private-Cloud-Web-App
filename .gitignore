@@ -1,0 +1,45 @@
+.gitignore
+.vscode/
+# Ignore all node_modules directories
+node_modules/
+# Ignore all log files
+*.log
+# Ignore all build directories
+build/
+# Ignore all test coverage directories
+coverage/
+# Ignore all environment variable files
+.env
+# Ignore all temporary files
+*.tmp
+# Ignore all cache directories
+.cache/
+# Ignore all IDE specific files
+.idea/
+# Ignore all OS specific files
+.DS_Store
+# Ignore all backup files
+*~
+# Ignore all npm debug files
+npm-debug.log*
+# Ignore all yarn lock files
+yarn.lock
+# Ignore all package lock files
+package-lock.json
+# Ignore all dist directories
+dist/
+# Ignore all temporary directories
+tmp/
+# Ignore all documentation directories
+docs/
+# Ignore all configuration files
+config/
+# Ignore all coverage reports
+coverage-report/
+# Ignore all test result files
+test-results/
+# Ignore all build artifacts
+build-artifacts/
+
+
+*.pyc

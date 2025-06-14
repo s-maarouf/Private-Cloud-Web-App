@@ -1,0 +1,170 @@
+.openstack-teacher-dashboard {
+	padding: 20px;
+	background-color: #f5f7fa;
+	min-height: calc(100vh - 60px); /* Ajuster en fonction de la hauteur de l'en-tête */
+}
+
+.openstack-teacher-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #e1e4e8;
+}
+
+.openstack-teacher-welcome h1 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #2c3e50;
+  margin: 0 0 5px 0;
+}
+
+.openstack-teacher-welcome p {
+  color: #7f8c8d;
+  margin: 0;
+}
+
+.openstack-teacher-actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.openstack-notifications {
+  position: relative;
+  cursor: pointer;
+  color: #34495e;
+  font-size: 18px;
+}
+
+.notification-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background-color: #e74c3c;
+  color: white;
+  font-size: 11px;
+  font-weight: bold;
+  height: 18px;
+  width: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.openstack-user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.openstack-user-info span {
+  font-weight: 500;
+  color: #2c3e50;
+}
+
+.openstack-logout-btn {
+  background-color: transparent;
+  border: 1px solid #e74c3c;
+  color: #e74c3c;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.openstack-logout-btn:hover {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.openstack-teacher-tabs {
+  display: flex;
+  border-bottom: 1px solid #e1e4e8;
+  margin-bottom: 20px;
+}
+
+.tab-btn {
+  padding: 12px 20px;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  color: #7f8c8d;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s;
+}
+
+.tab-btn:hover {
+  color: #3498db;
+}
+
+.tab-btn.active {
+  color: #3498db;
+  border-bottom-color: #3498db;
+}
+
+.openstack-teacher-content {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  padding: 20px;
+}
+
+/* Styles pour le spinner de chargement */
+.openstack-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+}
+
+.spinner {
+  border: 3px solid rgba(0,0,0,0.1);
+  border-radius: 50%;
+  border-top: 3px solid #3498db;
+  width: 30px;
+  height: 30px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 10px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Style pour les messages d'erreur */
+.openstack-error {
+	background-color: #ffeaea;
+	border: 1px solid #e74c3c;
+	color: #e74c3c;
+	padding: 10px 15px;
+	border-radius: 4px;
+	margin-bottom: 20px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+	.openstack-teacher-header {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 15px;
+	}
+
+	.openstack-teacher-actions {
+		width: 100%;
+		justify-content: space-between;
+	}
+
+	.openstack-teacher-tabs {
+		overflow-x: auto;
+		width: 100%;
+	}
+}
