@@ -1,27 +1,39 @@
 import React, { useState, useEffect } from 'react';
-import { FaChalkboardTeacher, FaUsers, FaFlask, FaClipboardList } from 'react-icons/fa';
+import { FaChalkboardTeacher, FaFlask, FaClipboardList } from 'react-icons/fa';
 import teacherService from '../../services/api/teacherService';
 
 const TeacherOverview = ({ teacherData }) => {
-  const [stats, setStats] = useState({
-    classes: { total: 0, list: [] },
-    students: { total: 0 },
-    labs: { total: 0, pending: 0, approved: 0 },
-    completionRates: []
-  });
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+	const [stats, setStats] = useState({
+		classes: { total: 0, list: [] },
+		students: { total: 0 },
+		labs: { total: 0, pending: 0, approved: 0 },
+		completionRates: []
+	});
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState(null);
+	useEffect(() => {
+		const fetchData = async () => {
+			try {
+				setLoading(true);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-
-        // Get all data in parallel using Promise.all like in the admin dashboard
-        const [classesData, labsData] = await Promise.all([
-          teacherService.getAssignedClasses(),
-          teacherService.getLabs()
-        ]);
+				// Get assigned classes from teacherData if available, else fetch them
+				let classesData = [];
+				if (teacherData && teacherData.assigned_classes) {
+					// Format classes to match what's expected by the component
+          classesData = teacherData.assigned_classes.map(cls => ({
+            id: cls.id,
+            name: cls.name,
+            subjects: cls.subjects || [],
+            subjectCount: cls.subjects ? cls.subjects.length : 0,
+            description: `Classe ${cls.name} - ${cls.subjects ? cls.subjects.map(s => s.name).join(', ') : ''}`
+          }));
+        } else {
+          // Fallback to fetching if not available
+          classesData = await teacherService.getAssignedClasses();
+        }
+        
+        // Get lab data
+        const labsData = await teacherService.getLabs();
 
         // Process class data
         let totalStudents = 0;
@@ -39,144 +51,134 @@ const TeacherOverview = ({ teacherData }) => {
           if (students.length > 0 && classLabs.length > 0) {
             // In a real app, you would calculate based on actual completion data
             // For now we'll use a simpler calculation based on the admin dashboard pattern
-            const completionRate = Math.floor(Math.random() * 40) + 60; // Placeholder: 60-100%
-            
-            completionRates.push({
-              className: classInfo.name,
-              completionRate: completionRate,
-              classId: classInfo.id
-            });
-          }
-          
-          return {
-            ...classInfo,
-            studentCount: students.length
-          };
-        });
-        
-        // Wait for all class data to be processed
-        const classesWithData = await Promise.all(classPromises);
-        
-        // Calculate lab statistics
-        const pendingLabs = labsData.filter(lab => lab.status === 'pending').length;
-        const approvedLabs = labsData.filter(lab => lab.status === 'approved').length;
-        
-        setStats({
-          classes: {
-            total: classesData.length,
-            list: classesWithData
-          },
-          students: {
-            total: totalStudents
-          },
-          labs: {
-            total: labsData.length,
-            pending: pendingLabs,
-            approved: approvedLabs
-          },
-          completionRates: completionRates
-        });
+						const completionRate = Math.floor(Math.random() * 40) + 60; // Placeholder: 60-100%
 
-      } catch (err) {
-        console.error('Erreur lors de la récupération des données du tableau de bord:', err);
-        setError('Échec du chargement des données. Veuillez réessayer.');
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    fetchData();
-  }, []);
+						completionRates.push({
+							className: classInfo.name,
+							completionRate: completionRate,
+							classId: classInfo.id
+						});
+					}
 
-  if (loading) {
-    return (
-      <div className="loading-container">
-        Chargement des statistiques...
-      </div>
-    );
-  }
+					return {
+						...classInfo,
+						studentCount: students.length
+					};
+				});
 
-  if (error) {
-    return <div className="error-container">{error}</div>;
-  }
+				// Wait for all class data to be processed
+				const classesWithData = await Promise.all(classPromises);
 
-  return (
-    <div className="teacher-overview">
-      <h1>Tableau de bord de {teacherData?.first_name} {teacherData?.last_name}</h1>
-      <p className="designation">{teacherData?.designation || 'Enseignant'}</p>
+				// Calculate lab statistics
+				const pendingLabs = labsData.filter(lab => lab.status === 'pending').length;
+				const approvedLabs = labsData.filter(lab => lab.status === 'approved').length;
 
-      <div className="stats-container">
-        <div className="stat-card">
-          <div className="stat-icon classes">
-            <FaChalkboardTeacher />
-          </div>
-          <div className="stat-details">
-            <h3>Classes</h3>
-            <div className="stat-count">{stats.classes.total}</div>
-          </div>
-        </div>
-        
-        <div className="stat-card">
-          <div className="stat-icon users">
-            <FaUsers />
-          </div>
-          <div className="stat-details">
-            <h3>Étudiants</h3>
-            <div className="stat-count">{stats.students.total}</div>
-          </div>
-        </div>
-        
-        <div className="stat-card">
-          <div className="stat-icon labs">
-            <FaFlask />
-          </div>
-          <div className="stat-details">
-            <h3>Laboratoires</h3>
-            <div className="stat-count">{stats.labs.total}</div>
-            <div className="stat-breakdown">
-              <span className="pending">{stats.labs.pending} En attente</span>
-              <span className="approved">{stats.labs.approved} Approuvés</span>
-            </div>
-          </div>
-        </div>
-        
-        <div className="stat-card">
-          <div className="stat-icon progress">
-            <FaClipboardList />
-          </div>
-          <div className="stat-details">
-            <h3>Taux de réalisation</h3>
-            <div className="stat-count">
-              {stats.completionRates.length > 0 ? 
-                `${Math.round(stats.completionRates.reduce((acc, curr) => acc + curr.completionRate, 0) / stats.completionRates.length)}%` : 
-                'N/A'}
-            </div>
-          </div>
-        </div>
-      </div>
+				setStats({
+					classes: {
+						total: classesData.length,
+						list: classesWithData
+					},
+					students: {
+						total: totalStudents
+					},
+					labs: {
+						total: labsData.length,
+						pending: pendingLabs,
+						approved: approvedLabs
+					},
+					completionRates: completionRates
+				});
 
-      <div className="class-progress-section">
-        <h2>Progression par classe</h2>
-        
-        {stats.completionRates.length > 0 ? (
-          stats.completionRates.map((classRate) => (
-            <div className="class-progress-item" key={classRate.classId}>
-              <h3>{classRate.className}</h3>
-              <div className="progress-container">
-                <div 
-                  className="progress-bar" 
-                  style={{ width: `${classRate.completionRate}%` }}
-                ></div>
-                <span className="progress-value">{classRate.completionRate}%</span>
-              </div>
-            </div>
-          ))
-        ) : (
-          <p className="no-data">Aucune donnée de progression disponible.</p>
-        )}
-      </div>
-    </div>
-  );
+			} catch (err) {
+				console.error('Erreur lors de la récupération des données du tableau de bord:', err);
+				setError('Échec du chargement des données. Veuillez réessayer.');
+			} finally {
+				setLoading(false);
+			}
+		};
+
+		fetchData();
+	}, []);
+
+	if (loading) {
+		return (
+			<div className="loading-container">
+				Chargement des statistiques...
+			</div>
+		);
+	}
+
+	if (error) {
+		return <div className="error-container">{error}</div>;
+	}
+
+	return (
+		<div className="teacher-overview">
+			<h1>Tableau de bord de {teacherData?.first_name} {teacherData?.last_name}</h1>
+			<p className="designation">{teacherData?.designation || 'Enseignant'}</p>
+
+			<div className="stats-container">
+				<div className="stat-card">
+					<div className="stat-icon classes">
+						<FaChalkboardTeacher />
+					</div>
+					<div className="stat-details">
+						<h3>Classes</h3>
+						<div className="stat-count">{stats.classes.total}</div>
+					</div>
+				</div>
+
+				<div className="stat-card">
+					<div className="stat-icon labs">
+						<FaFlask />
+					</div>
+					<div className="stat-details">
+						<h3>Laboratoires</h3>
+						<div className="stat-count">{stats.labs.total}</div>
+						<div className="stat-breakdown">
+							<span className="pending">{stats.labs.pending} En attente</span>
+							<span className="approved">{stats.labs.approved} Approuvés</span>
+						</div>
+					</div>
+				</div>
+
+				<div className="stat-card">
+					<div className="stat-icon progress">
+						<FaClipboardList />
+					</div>
+					<div className="stat-details">
+						<h3>Taux de réalisation</h3>
+						<div className="stat-count">
+							{stats.completionRates.length > 0 ? 
+								`${Math.round(stats.completionRates.reduce((acc, curr) => acc + curr.completionRate, 0) / stats.completionRates.length)}%` : 
+								'N/A'}
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div className="class-progress-section">
+				<h2>Progression par classe</h2>
+
+				{stats.completionRates.length > 0 ? (
+					stats.completionRates.map((classRate) => (
+						<div className="class-progress-item" key={classRate.classId}>
+							<h3>{classRate.className}</h3>
+							<div className="progress-container">
+								<div 
+									className="progress-bar" 
+									style={{ width: `${classRate.completionRate}%` }}
+								></div>
+								<span className="progress-value">{classRate.completionRate}%</span>
+							</div>
+						</div>
+					))
+				) : (
+					<p className="no-data">Aucune donnée de progression disponible.</p>
+				)}
+			</div>
+		</div>
+	);
 };
 
 export default TeacherOverview;

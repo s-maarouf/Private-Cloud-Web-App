@@ -1,19 +1,33 @@
 import React, { useState, useEffect } from 'react';
-import { FaChalkboardTeacher, FaUsers, FaSearch } from 'react-icons/fa';
+import { FaChalkboardTeacher, FaSearch } from 'react-icons/fa';
 import apiService from '../../services/api/teacherService';
 
-const ClassesPanel = ({ onClassSelect }) => {
+const ClassesPanel = ({ onClassSelect, teacherData }) => {
   const [classes, setClasses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [error, setError] = useState(null);
-
   useEffect(() => {
     const fetchClasses = async () => {
       try {
         setLoading(true);
-        const classesData = await apiService.getAssignedClasses();
-        setClasses(classesData);
+        
+        // If teacherData has assigned_classes, use that instead of making another API call
+        if (teacherData && teacherData.assigned_classes) {
+          const formattedClasses = teacherData.assigned_classes.map(cls => ({
+            id: cls.id,
+            name: cls.name,
+            subjects: cls.subjects || [],
+            subjectCount: cls.subjects ? cls.subjects.length : 0,
+            description: `Classe ${cls.name}`
+          }));
+          setClasses(formattedClasses);
+        } else {
+          // Fallback to API call if data not available in props
+          const classesData = await apiService.getAssignedClasses();
+          setClasses(classesData);
+        }
+        
         setLoading(false);
       } catch (err) {
         console.error('Error fetching classes:', err);
@@ -23,7 +37,7 @@ const ClassesPanel = ({ onClassSelect }) => {
     };
 
     fetchClasses();
-  }, []);
+  }, [teacherData]);
 
   const filteredClasses = classes.filter(cls => 
     cls.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -62,9 +76,7 @@ const ClassesPanel = ({ onClassSelect }) => {
           <FaChalkboardTeacher size={48} />
           <p>Aucune classe trouvée. {searchTerm ? 'Essayez une autre recherche.' : ''}</p>
         </div>
-      )}
-
-      <div className="classes-grid">
+      )}      <div className="classes-grid">
         {filteredClasses.map(cls => (
           <div 
             className="class-card" 
@@ -73,13 +85,19 @@ const ClassesPanel = ({ onClassSelect }) => {
           >
             <div className="class-card-header">
               <h3>{cls.name}</h3>
-              <span className="student-count">
-                <FaUsers />
-                {cls.student_count || '0'} étudiants
-              </span>
             </div>
             <div className="class-card-body">
-              <p>{cls.description || 'Aucune description disponible.'}</p>
+              <p className="class-description">{cls.name}</p>
+              {cls.subjects && cls.subjects.length > 0 && (
+                <div className="subjects-list">
+                  <h4>Matières enseignées:</h4>
+                  <ul>
+                    {cls.subjects.map(subject => (
+                      <li key={subject.id}>{subject.name}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
             <div className="class-card-footer">
               <button className="view-button">Voir les laboratoires</button>

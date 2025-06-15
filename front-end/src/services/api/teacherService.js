@@ -2,8 +2,7 @@
 
 import { API_BASE_URL, handleResponse } from './config';
 
-const teacherService = {
-  // Récupérer le profil de l'enseignant (uses the general profile endpoint)
+const teacherService = {  // Récupérer le profil de l'enseignant (uses the general profile endpoint)
   getProfile: async () => {
     try {
       // Using the profile endpoint available for all users
@@ -14,7 +13,16 @@ const teacherService = {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         },
       });
-      return handleResponse(response);
+      
+      // Process the response
+      const data = await handleResponse(response);
+      
+      // Store the newly formatted user data in localStorage for easy access across components
+      if (data && data.user && data.user.role === 'teacher') {
+        localStorage.setItem('teacherData', JSON.stringify(data.user));
+      }
+      
+      return data;
     } catch (error) {
       console.error('API Error:', error);
       throw error;
@@ -38,11 +46,10 @@ const teacherService = {
       console.error('API Error:', error);
       throw error;
     }
-  },
-  // Récupérer les classes assignées à l'enseignant
+  },  // Récupérer les classes assignées à l'enseignant
   getAssignedClasses: async () => {
     try {
-      // Get the current user first to ensure we're authenticated
+      // Get the current user profile which now includes assigned classes
       const userResponse = await fetch(`${API_BASE_URL}/users/profile`, {
         method: 'GET',
         headers: {
@@ -63,39 +70,29 @@ const teacherService = {
         return [];
       }
       
-      // Get all classes
-      const response = await fetch(`${API_BASE_URL}/class`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
-      });
-      const data = await handleResponse(response);
+      // Use the assigned_classes from the user profile
+      const assignedClasses = userData.user.assigned_classes || [];
       
-      // Check if we have classes in the response
-      if (!data || !Array.isArray(data.classes)) {
-        console.error('Invalid classes response format:', data);
+      if (!Array.isArray(assignedClasses)) {
+        console.error('Invalid assigned_classes format:', assignedClasses);
         return [];
       }
       
-      // TEMPORARY IMPLEMENTATION:
-      // Currently, the backend doesn't provide a way to filter classes by teacher
-      // In a proper implementation, we would:
-      // 1. Either have a dedicated endpoint for teacher classes
-      // 2. Or filter the classes on the backend
-      // 3. Or get teacher assignments and filter classes client-side
-      
-      // For now, return all classes with enhanced data for the UI
-      return data.classes.map(cls => ({
-        id: cls.id,
-        name: cls.name,
-        // Add additional data needed by the frontend components
-        studentCount: Math.floor(Math.random() * 20) + 10, // Dummy data: 10-30 students
-        description: `Classe ${cls.name}`, // Simple description
-        // Could add more fields that the UI might need
-        subjectCount: Math.floor(Math.random() * 5) + 1, // Dummy data: 1-5 subjects
-      }));
+      // Format classes with additional information needed by the UI
+      return assignedClasses.map(cls => {
+        // Get the subjects for this class
+        const subjects = cls.subjects || [];
+        
+        // Create the formatted class object
+        return {
+          id: cls.id,
+          name: cls.name,
+          subjects: subjects,
+          subjectCount: subjects.length,
+          description: `Classe ${cls.name} - ${subjects.map(subj => subj.name).join(', ')}`,
+          studentCount: 0, // Will be populated when needed by getClassStudents
+        };
+      });
       
       /* TODO: Future implementation once backend provides teacher assignments:
       
@@ -307,11 +304,11 @@ const teacherService = {
       return [];
     }
   },
-    // Créer une demande de laboratoire
+  // Créer une demande de laboratoire
   createLabRequest: async (labData) => {
     try {
       // Use the standard lab creation endpoint which is protected by teacher_required decorator
-      const response = await fetch(`${API_BASE_URL}/lab`, {
+      const response = await fetch(`${API_BASE_URL}/labs`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

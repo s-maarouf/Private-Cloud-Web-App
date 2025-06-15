@@ -18,13 +18,20 @@ const TeacherDashboard = () => {
   // Check if user is authenticated and is teacher
   const token = localStorage.getItem('token');
   const userRole = localStorage.getItem('userRole');
-
   useEffect(() => {
     const fetchTeacherData = async () => {
       try {
         setLoading(true);
         const profile = await apiService.getProfile();
-        setTeacherData(profile);
+        
+        // Extract the user data from the response
+        if (profile && profile.user) {
+          setTeacherData(profile.user);
+        } else {
+          console.error('Invalid profile response format:', profile);
+          setError('Données du profil invalides');
+        }
+        
         setLoading(false);
       } catch (err) {
         console.error('Error fetching teacher data:', err);
@@ -43,17 +50,22 @@ const TeacherDashboard = () => {
   if (userRole !== 'teacher') {
     return <Navigate to="/dashboard" replace />;
   }
-
   // Render the active panel based on selection
   const renderPanel = () => {
     switch (activePanel) {
       case 'classes':
-        return <ClassesPanel onClassSelect={(classData) => {
-          setSelectedClass(classData);
-          setActivePanel('labs');
-        }} />;
+        return <ClassesPanel 
+          teacherData={teacherData}
+          onClassSelect={(classData) => {
+            setSelectedClass(classData);
+            setActivePanel('labs');
+          }} 
+        />;
       case 'labs':
-        return <LabsPanel classData={selectedClass} />;
+        return <LabsPanel 
+          classData={selectedClass}
+          teacherData={teacherData}
+        />;
       case 'profile':
         return <TeacherProfile teacherData={teacherData} />;
       default:

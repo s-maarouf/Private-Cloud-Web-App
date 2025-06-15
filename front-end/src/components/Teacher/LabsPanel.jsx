@@ -3,7 +3,7 @@ import { FaFlask, FaArrowLeft, FaPlus, FaSearch } from 'react-icons/fa';
 import apiService from '../../services/api/teacherService';
 import NewLabModal from './NewLabModal';
 
-const LabsPanel = ({ classData }) => {
+const LabsPanel = ({ classData, onBackToClasses }) => {
   const [labs, setLabs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -67,7 +67,7 @@ const LabsPanel = ({ classData }) => {
     <div className="labs-panel">
       <div className="panel-header">
         <div className="header-left">
-          <button className="back-button">
+          <button className="back-button" onClick={onBackToClasses}>
             <FaArrowLeft />
             <span>Retour aux classes</span>
           </button>
