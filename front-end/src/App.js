@@ -10,6 +10,7 @@ import Login from './features/auth/Login';
 import Register from './features/auth/Register';
 import AdminDashboard from './components/Admin/AdminDashboard';
 import TeacherDashboard from './components/Teacher/TeacherDashboard';
+import StudentDashboard from './components/Student/StudentDashboard';
 import NotFound from './pages/public/NotFound';
 
 // Components
@@ -87,6 +88,21 @@ function App() {
 							} 
 						/>
 						
+						{/* Student Routes */}
+						<Route 
+							path="/student/dashboard" 
+							element={
+								<ProtectedRoute 
+									isAuthenticated={isAuthenticated}
+									allowedRoles={['student', 'etudiant']}
+									redirectPath="/login"
+									userRole={userRole}
+								>
+									<StudentDashboard />
+								</ProtectedRoute>
+							} 
+						/>
+						
 						{/* Additional teacher routes - Handled by panel switching inside TeacherDashboard */}
 						<Route 
 							path="/teacher/classes" 
@@ -104,7 +120,7 @@ function App() {
 						
 						<Route 
 							path="/teacher/labs" 
-							element={
+						element={
 								<ProtectedRoute 
 									isAuthenticated={isAuthenticated}
 									allowedRoles={['teacher', 'enseignant']}

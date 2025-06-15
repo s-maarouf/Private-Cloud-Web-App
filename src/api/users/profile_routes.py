@@ -13,7 +13,7 @@ def profile_routes(bp):
     def get_profile(current_user):
         user_data = {
             'id': current_user.id,
-            'username': current_user.username,
+            'email': current_user.email,
             'first_name': current_user.first_name,
             'name': current_user.name,
             'role': current_user.role.name
@@ -23,7 +23,7 @@ def profile_routes(bp):
         if current_user.role.name == 'student':
             student = Student.query.filter_by(user_id=current_user.id).first()
             if student:
-                user_data['student_id'] = student.id
+                user_data['user_id'] = student.user_id
                 user_data['class_id'] = student.class_id
 
         return jsonify({'user': user_data}), 200

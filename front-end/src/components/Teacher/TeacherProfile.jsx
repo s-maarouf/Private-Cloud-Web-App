@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FaEdit, FaLock, FaUser } from 'react-icons/fa';
 import apiService from '../../services/api/teacherService';
 // Import the image directly
-import teacherAvatar from '../../components/images/9440461.jpg';
+import teacherAvatar from '../../components/images/MenAvatar.jpg';
 // Import CSS for styling
 import './TeacherProfile.css';
 

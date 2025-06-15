@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaUser, FaChalkboardTeacher, FaHome, FaPowerOff } from 'react-icons/fa';
-import teacherAvatar from '../../components/images/9440461.jpg';
+import teacherAvatar from '../../components/images/MenAvatar.jpg';
 import BTSlogo from '../../components/images/bts.jpg';
 
 
